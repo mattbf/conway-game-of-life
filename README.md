@@ -1,1 +1,3 @@
-# conway-game-of-life
+# Conway Game of Life
+
+## How it works

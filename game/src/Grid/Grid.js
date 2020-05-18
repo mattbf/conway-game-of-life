@@ -2,33 +2,44 @@ import React from 'react';
 import { Button } from 'semantic-ui-react'
 import Cell from './Cell.js';
 
-const gameBoardStyle = {
-  width: '65%',
-  maxWidth: 750,
-  border: 'solid',
-  borderColor: 'white',
-  minHeight: 400,
-  display: 'flex',
-  flexDirection: 'row',
-  flexWrap: 'wrap',
 
-}
-
-const gameBoardStyleMobile = {
-  width: '95%',
-  border: 'solid',
-  borderColor: 'white',
-  minHeight: 400,
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'start'
-
-}
 
 function Grid(props) {
   const windowSize = props.windowSize
-  const numCells = 120
+
+  const numRows = 2
+  const numCols = 120
+  const numCells = numRows * numCols
+  var colStr = makeCols()
+
+  function makeCols() {
+    var string = '1fr'
+    for (var i = 0; i <= numCells; i++) {
+      string = string.concat(' 1fr')
+    }
+    return string
+  }
+
+  const gameBoardStyle = {
+    width: '65%',
+    maxWidth: 750,
+    border: 'solid',
+    borderColor: 'white',
+    minHeight: 400,
+    display: 'grid',
+    gridTemplateColumns: colStr
+  }
+
+  const gameBoardStyleMobile = {
+    width: '95%',
+    border: 'solid',
+    borderColor: 'white',
+    minHeight: 400,
+    display: 'grid',
+    gridTemplateColumns: colStr
+
+  }
+
 
   var cells = [];
   for (var i = 0; i <= numCells; i++) {

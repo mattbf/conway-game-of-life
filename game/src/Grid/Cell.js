@@ -6,8 +6,8 @@ const cellStyle = {
   borderColor: 'grey',
   color: 'green',
   backgroundColor: 'black',
-  width: '20px',
-  height: '20px',
+  width: '100%',
+  height: '100%',
   margin: '1px'
 }
 
