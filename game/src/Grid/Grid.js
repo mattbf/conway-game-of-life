@@ -7,14 +7,16 @@ import Cell from './Cell.js';
 function Grid(props) {
   const windowSize = props.windowSize
 
+  //Define the numnber of rows and columns
   const numRows = 2
-  const numCols = 120
+  const numCols = 20
   const numCells = numRows * numCols
+  //Set the grid column settings based on the number of columns
   var colStr = makeCols()
 
   function makeCols() {
-    var string = '1fr'
-    for (var i = 0; i <= numCells; i++) {
+    var string = ''
+    for (var i = 0; i < numCols; i++) {
       string = string.concat(' 1fr')
     }
     return string
@@ -40,9 +42,8 @@ function Grid(props) {
 
   }
 
-
   var cells = [];
-  for (var i = 0; i <= numCells; i++) {
+  for (var i = 0; i < numCells; i++) {
   	cells.push({
       num: i,
     })

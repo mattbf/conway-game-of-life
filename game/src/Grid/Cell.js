@@ -16,7 +16,9 @@ function Cell(props) {
 
   return (
     <div style={cellStyle}>
-
+      {
+        props.index + 1
+      }
     </div>
   );
 }
