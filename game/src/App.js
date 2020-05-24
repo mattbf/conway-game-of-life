@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Button,
   Icon,
@@ -15,7 +15,8 @@ const mainStyle = {
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  padding: '10px'
+  padding: '10px',
+  color: '#FFFFFF',
 };
 
 const mainStyleMobile = {
@@ -26,7 +27,8 @@ const mainStyleMobile = {
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  padding: '10px'
+  padding: '10px',
+  color: '#FFFFFF',
 };
 
 const gameBoardStyle = {
@@ -42,14 +44,46 @@ const controls = {
 }
 
 const startConfigurations = [
-  { key: 'af', value: 'af', text: 'Afghanistan' },
-  { key: 'ax', value: 'ax', text: 'Aland Islands' },
-  { key: 'al', value: 'al', text: 'Albania' },
+  { key: 'af', value: 'af', text: 'Random' },
+  { key: 'ax', value: 'ax', text: 'Shooter' },
 ]
 
 function App() {
   const windowSize = useWindowSize()
   const [play, setPlay] = useState(false)
+  const [configuration, setConfiguration] = useState(startConfigurations)
+  //Fixed grid
+  const numCols = windowSize.width < 650 ? 50 : 100
+  const numRows = windowSize.width < 650 ? 25 : 50
+  const numCells = numCols * numRows
+
+  const [cellState, setCellState] = useState([])
+
+
+  //load the grid/cell state
+  useEffect(() => {
+    var mobile = windowSize.width < 650 ? true : false
+    var cells = []
+    //create the cell state based on grid size
+    for (var i = 0; i < numCells; i++) {
+    	cells.push({
+        num: i,
+        alive: false,
+        col: i % numCols,
+        row: Math.round(i / numCols),
+        alive: Math.random() < 0.1 ? true : false 
+      })
+    }
+    setCellState(cells)
+
+    if(!mobile){
+      //desktop
+
+    } else {
+      //mobile
+
+    }
+  }, [windowSize.width])
 
   return (
     <div style={windowSize.width < 650 ? mainStyleMobile : mainStyle}>
@@ -59,12 +93,15 @@ function App() {
         border: '2px solid rgba(255, 255, 255, 1)',
         width: windowSize.width < 650 ? '95%' : '75%',
         maxWidth: 1000,
-        minHeight: 500,
+        minHeight: windowSize.width < 650 ? 300 : 500,
         borderRadius: '6px',
-        padding: '10px  '
+        padding: '10px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between'
       }}>
       <div style={controls}>
-      <Select placeholder='Select your country' options={startConfigurations} />
+      <Select placeholder='Default start' options={configuration} />
       <Button icon>
         {
           play ?
@@ -74,7 +111,7 @@ function App() {
         }
       </Button>
       </div>
-      <Grid windowSize={windowSize}/>
+      <Grid windowSize={windowSize} numCols={numCols} numRows={numRows} cells={cellState}/>
       </div>
     </div>
   );

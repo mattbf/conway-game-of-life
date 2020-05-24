@@ -5,11 +5,11 @@ import { Button } from 'semantic-ui-react'
 
 function Cell(props) {
   const windowSize = props.windowSize
-  const [alive, setAlive] = useState(props.alive)
+  const cell = props.cell
 
   return (
     <div style={{
-      backgroundColor: alive ? "#3CFF72" : "black",
+      backgroundColor: cell.alive ? "#3CFF72" : "black",
       color: 'green',
       width: '8px',
       height: '8px',

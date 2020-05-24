@@ -28,8 +28,9 @@ function Grid(props) {
   // const numCells = numRows * numCols
 
   //Fixed grid
-  const numCols = windowSize.width < 650 ? 50 : 100
-  const numRows = windowSize.width < 650 ? 25 : 50
+  const numCols = props.numCols
+  const numRows = props.numRows
+  const cells = props.cells
   const numCells = numRows * numCols
 
   var colStr = makeCols()
@@ -41,19 +42,13 @@ function Grid(props) {
     return string
   }
 
-  var cells = [];
-  for (var i = 0; i < numCells; i++) {
-  	cells.push({
-      num: i,
-    })
-  }
 
   return (
     <div style={windowSize.width < 650 ? gameBoardStyleMobile : gameBoardStyle}>
       <div style={{display: 'grid', gridTemplateColumns: colStr, width: '100%', height: '100%'}}>
         {
         cells.map((cell, i) => (
-          <Cell index={i} key={i} alive={Math.round(Math.random()) === 1 ? true : false}/>
+          <Cell index={i} key={i} cell={cell}/>
         ))
         }
       </div>
