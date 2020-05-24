@@ -16,6 +16,7 @@ const gameBoardStyleMobile = {
   border: 'solid',
   borderColor: 'white',
   minHeight: 400,
+  overflow: 'hidden'
 }
 
 
@@ -30,8 +31,8 @@ function Grid(props) {
   // const numCells = numRows * numCols
 
   //Fixed grid
-  const numCols = 100
-  const numRows = 50
+  const numCols = windowSize.width < 650 ? 50 : 100
+  const numRows = windowSize.width < 650 ? 25 : 50
   const numCells = numRows * numCols
 
   var colStr = makeCols()
