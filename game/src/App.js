@@ -71,7 +71,7 @@ function App() {
         alive: false,
         col: i % numCols,
         row: Math.round(i / numCols),
-        alive: Math.random() < 0.1 ? true : false 
+        alive: Math.random() < 0.1 ? true : false
       })
     }
     setCellState(cells)
@@ -84,6 +84,19 @@ function App() {
 
     }
   }, [windowSize.width])
+
+  //run the engine
+  useEffect(() => {
+    console.log("play changed")
+    if(play){
+      console.log("start the game")
+      var game = setInterval(() => {console.log("Change the grid")}, 500);
+    } else {
+      console.log("pause the game")
+      clearInterval(game)
+    }
+    return () => clearInterval(game);
+  }, [play])
 
   return (
     <div style={windowSize.width < 650 ? mainStyleMobile : mainStyle}>
@@ -102,12 +115,12 @@ function App() {
       }}>
       <div style={controls}>
       <Select placeholder='Default start' options={configuration} />
-      <Button icon>
+      <Button icon onClick={() => setPlay(!play)}>
         {
           play ?
-          <Icon name='pause' />
+          <Icon name='pause'/>
           :
-          <Icon name='caret right' />
+          <Icon name='caret right'/>
         }
       </Button>
       </div>
