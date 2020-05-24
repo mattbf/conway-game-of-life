@@ -3,11 +3,12 @@ import { Button } from 'semantic-ui-react'
 import Cell from './Cell.js';
 
 const gameBoardStyle = {
-  width: '65%',
-  maxWidth: 750,
+  width: '75%',
+  maxWidth: 1000,
   border: 'solid',
   borderColor: 'white',
-  minHeight: 400,
+  minHeight: 500,
+  overflow: 'hidden'
 }
 
 const gameBoardStyleMobile = {
@@ -20,17 +21,19 @@ const gameBoardStyleMobile = {
 
 function Grid(props) {
   const windowSize = props.windowSize
-  var aspectRatio = windowSize.width / windowSize.height
 
-  console.log(aspectRatio)
+  //OLD method for making a responsive grid
+  // var aspectRatio = windowSize.width / windowSize.height
+  // console.log(aspectRatio)
+  // const numCols = Math.floor(windowSize.width / 25)
+  // const numRows = windowSize.width < 650 ? Math.floor(numCols / aspectRatio) : Math.ceil(numCols / aspectRatio)
+  // const numCells = numRows * numCols
 
-  console.log( windowSize)
-  const numCols = Math.floor(windowSize.width / 25)
-  console.log(numCols)
-  const numRows = windowSize.width < 650 ? Math.floor(numCols / aspectRatio) : Math.ceil(numCols / aspectRatio)
-  console.log(numRows)
+  //Fixed grid
+  const numCols = 100
+  const numRows = 50
   const numCells = numRows * numCols
-  //Set the grid column settings based on the number of columns
+
   var colStr = makeCols()
   function makeCols() {
     var string = ''
@@ -49,11 +52,10 @@ function Grid(props) {
 
   return (
     <div style={windowSize.width < 650 ? gameBoardStyleMobile : gameBoardStyle}>
-      <h4> Cells: {numCells} = {numCols} x {numRows} </h4>
       <div style={{display: 'grid', gridTemplateColumns: colStr, width: '100%', height: '100%'}}>
         {
         cells.map((cell, i) => (
-          <Cell index={i} key={i} />
+          <Cell index={i} key={i} alive={Math.round(Math.random()) === 1 ? true : false}/>
         ))
         }
       </div>

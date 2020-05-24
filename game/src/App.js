@@ -1,10 +1,10 @@
-import React from 'react';
-import { Button } from 'semantic-ui-react'
+import React, {useState} from 'react';
+import { Button, Icon } from 'semantic-ui-react'
 import useWindowSize from './Utils/useWindowSize';
 import Grid from './Grid/Grid.js';
 
 const mainStyle = {
-  backgroundColor: 'blue',
+  backgroundColor: '#313131',
   width: '100%',
   height: '100vh',
   display: 'flex',
@@ -14,7 +14,7 @@ const mainStyle = {
 };
 
 const mainStyleMobile = {
-  backgroundColor: 'green',
+  backgroundColor: '#313131',
   width: '100%',
   height: '100vh',
   display: 'flex',
@@ -29,11 +29,19 @@ const gameBoardStyle = {
 
 function App() {
   const windowSize = useWindowSize()
+  const [play, setPlay] = useState(false)
 
   return (
     <div style={windowSize.width < 650 ? mainStyleMobile : mainStyle}>
       Conway Game
-      <Button> Hello </Button>
+      <Button icon>
+        {
+          play ?
+          <Icon name='pause' />
+          :
+          <Icon name='caret right' />
+        }
+      </Button>
       <Grid windowSize={windowSize}/>
     </div>
   );
