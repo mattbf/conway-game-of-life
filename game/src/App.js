@@ -56,11 +56,85 @@ function App() {
   const [configuration, setConfiguration] = useState(startConfigurations)
   //Fixed grid
   const numCols = windowSize.width < 650 ? 50 : 10
-  const numRows = windowSize.width < 650 ? 25 : 5
+  const numRows = windowSize.width < 650 ? 25 : 10
   const numCells = numCols * numRows
 
   const [cellState, setCellState] = useState([])
 
+  function Engine(){
+    //RULES
+    //if dead and has 3 alive neighbours -> becomes alive
+    //if alive and has less than 2 neighbours -> dies
+    //if alive cell has over 3 neighbours -> dies
+    console.log("update state")
+    var newState = [...cellState]
+    var newAlive = []
+    var newDead = []
+    var curAlive = []
+    var ca = cellState.filter(c => c.alive)
+    ca.forEach(c => curAlive.push(c.num))
+    console.log(curAlive)
+
+    cellState.forEach(cell => {
+      //count alive and dead neighbours
+
+      // &&
+      // var neighbours = currentState.filter(c =>
+      //   c.col === cell.col || c.col === cell.col + 1 || c.col === cell.col - 1
+      //   && c.row === cell.row || c.row === cell.row + 1 || c.row === cell.row - 1
+      // )
+      var neighbours = []
+      var findN = []
+      findN.push(cellState.find(c => c.col === cell.col - 1 && c.row === cell.row + 1)) //top left neighbour
+      findN.push(cellState.find(c => c.col === cell.col && c.row === cell.row + 1)) //top center neighbour
+      findN.push(cellState.find(c => c.col === cell.col + 1 && c.row === cell.row + 1)) //top right neighbour
+      findN.push(cellState.find(c => c.col === cell.col - 1 && c.row === cell.row)) // left neighbour
+      findN.push(cellState.find(c => c.col === cell.col + 1 && c.row === cell.row)) // right neighbour
+      findN.push(cellState.find(c => c.col === cell.col - 1 && c.row === cell.row - 1)) //bottom left neighbour
+      findN.push(cellState.find(c => c.col === cell.col && c.row === cell.row - 1)) //bottom center neighbour
+      findN.push(cellState.find(c => c.col === cell.col + 1 && c.row === cell.row - 1)) //bottom right neighbour
+      neighbours = findN.filter(n => n !== undefined)
+      var nAlive = neighbours.filter(n => n.alive)
+      var nDead = neighbours.filter(n => !n.alive)
+
+      if(cell.alive){
+        //cell is ALIVE
+        //console.log(cell.num + " is alive and has " + nAlive.length + " alive neighbours")
+        //console.log(nAlive.length < 2)
+        //console.log(nAlive.length > 3)
+        if(nAlive.length < 2){
+          //console.log("killing cell " + cell.num)
+          newDead.push(cell.num)
+          newState = [...newState.map(c => (c.num === cell.num ? { ...c, alive: false } : c))]
+        } else if(nAlive.length > 3){
+          newDead.push(cell.num)
+          //console.log("killing cell " + cell.num)
+          newState = [...newState.map(c => (c.num === cell.num ? { ...c, alive: false } : c))]
+        }
+      } else {
+        //cell is DEAD
+        if(nAlive.length === 3) {
+          newAlive.push(cell.num)
+          //console.log(cell.num + " has " + nAlive.length + " neighbours")
+          //console.log("making cell " + cell.num + " alive")
+          newState = [...newState.map(c => (c.num === cell.num ? { ...c, alive: true } : c))]
+        }
+      }
+      //console.log('cell ' + cell.num + " has " + nAlive.length + " alive and " + nDead.length +" dead neighbours ")
+      //console.log(neighbours)
+    })
+    //console.log(newState)
+    //return newState
+    //callback(newState)
+    //return { newState, newAlive, newDead }
+
+    setCellState(newState)
+  }
+
+  useEffect(() => {
+    console.log("cell state was updated")
+    console.log(cellState.filter(c => c.alive))
+  }, [cellState])
 
   //load the grid/cell state
   useEffect(() => {
@@ -72,7 +146,7 @@ function App() {
         num: i,
         col: i % numCols,
         row: Math.round(i / numCols),
-        alive: Math.random() < 0.1 ? true : false
+        alive: i === 14 || i === 13 || i === 18 || i === 12 || i === 100 || i === 15 || i === 1 || i === 11 || i === 23 || i === 24 ? true : false //Math.random() < 0.1 ? true : false
       })
     }
     setCellState(cells)
@@ -85,24 +159,43 @@ function App() {
       //mobile
 
     }
-  }, [windowSize.width])
+  }, [])
 
-  function UpdateGrid(){
-    var nextCells = NextState(cellState, numCols, numRows)
-    setCellState(nextCells)
+  function updateGrid() {
+    //var {newState, newAlive, newDead} = NextState(cellState)
+    //setCellState(NextState(cellState))
+    //setCellState(nextCells)
+
+    //console.log(newAlive)
+    //console.log(newDead)
+    var newState = NextState(cellState)
+    var newAlive = []
+    var na = newState.filter(c => c.alive)
+    na.forEach(c => newAlive.push(c.num))
+    console.log(newAlive)
+    setCellState(newState)
+
+    //NextState(cellState)
+  }
+
+  function MountTimer(){
+    // if(play){
+    //   console.log("start the game")
+    //   var game = setInterval(() => Engine(), 1000);
+    // } else {
+    //   console.log("pause the game")
+    //   clearInterval(game)
+    // }
+    // return () => clearInterval(game);
+    console.log("start the game")
+    var game = setInterval(Engine(), 1000);
+    return () => clearInterval(game);
   }
 
   //run the engine
   useEffect(() => {
     console.log("play changed")
-    if(play){
-      console.log("start the game")
-      var game = setInterval(() => {UpdateGrid()}, 1000);
-    } else {
-      console.log("pause the game")
-      clearInterval(game)
-    }
-    return () => clearInterval(game);
+    MountTimer()
   }, [play])
 
   return (
