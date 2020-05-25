@@ -2,7 +2,8 @@ import React, {useState, useEffect} from 'react';
 import {
   Button,
   Icon,
-  Select
+  Select,
+  Dropdown
 } from 'semantic-ui-react'
 import useWindowSize from './Utils/useWindowSize';
 import Grid from './Grid/Grid.js';
@@ -48,91 +49,47 @@ const controls = {
 }
 
 const startConfigurations = [
-  { key: 'af', value: 'af', text: 'Random' },
-  { key: 'ax', value: 'ax', text: 'Shooter' },
+  {key: 0, value: 0, text: 'Random' },
+  {key: 1, value: 1, text: 'Shooter' },
 ]
 
 function App() {
   const windowSize = useWindowSize()
   const [play, setPlay] = useState(false)
-  const [configuration, setConfiguration] = useState(startConfigurations)
+  const [configuration, setConfiguration] = useState({key: 0, value: 0, text: 'Random' })
   //Fixed grid
   const numCols = windowSize.width < 650 ? 50 : 100
   const numRows = windowSize.width < 650 ? 25 : 50
   const numCells = numCols * numRows
 
   const [cellState, setCellState] = useState([])
-  const [delay, setDelay] = useState(1000)
+  const [delay, setDelay] = useState(500)
 
-  function Engine(){
-    //RULES
-    //if dead and has 3 alive neighbours -> becomes alive
-    //if alive and has less than 2 neighbours -> dies
-    //if alive cell has over 3 neighbours -> dies
-    console.log("update state")
-    var newState = [...cellState]
-    var newAlive = []
-    var newDead = []
-    var curAlive = []
-    var ca = cellState.filter(c => c.alive)
-    ca.forEach(c => curAlive.push(c.num))
-    //console.log(curAlive)
+  const startingStates = [
+    {name: "Random", state: []},
+    {name: "Shooter", state: []}
+  ]
 
-    cellState.forEach(cell => {
-      //count alive and dead neighbours
-
-      // &&
-      // var neighbours = currentState.filter(c =>
-      //   c.col === cell.col || c.col === cell.col + 1 || c.col === cell.col - 1
-      //   && c.row === cell.row || c.row === cell.row + 1 || c.row === cell.row - 1
-      // )
-      var neighbours = []
-      var findN = []
-      findN.push(cellState.find(c => c.col === cell.col - 1 && c.row === cell.row + 1)) //top left neighbour
-      findN.push(cellState.find(c => c.col === cell.col && c.row === cell.row + 1)) //top center neighbour
-      findN.push(cellState.find(c => c.col === cell.col + 1 && c.row === cell.row + 1)) //top right neighbour
-      findN.push(cellState.find(c => c.col === cell.col - 1 && c.row === cell.row)) // left neighbour
-      findN.push(cellState.find(c => c.col === cell.col + 1 && c.row === cell.row)) // right neighbour
-      findN.push(cellState.find(c => c.col === cell.col - 1 && c.row === cell.row - 1)) //bottom left neighbour
-      findN.push(cellState.find(c => c.col === cell.col && c.row === cell.row - 1)) //bottom center neighbour
-      findN.push(cellState.find(c => c.col === cell.col + 1 && c.row === cell.row - 1)) //bottom right neighbour
-      neighbours = findN.filter(n => n !== undefined)
-      var nAlive = neighbours.filter(n => n.alive)
-      var nDead = neighbours.filter(n => !n.alive)
-
-      if(cell.alive){
-        //cell is ALIVE
-        //console.log(cell.num + " is alive and has " + nAlive.length + " alive neighbours")
-        //console.log(nAlive.length < 2)
-        //console.log(nAlive.length > 3)
-        if(nAlive.length < 2){
-          //console.log("killing cell " + cell.num)
-          newDead.push(cell.num)
-          newState = [...newState.map(c => (c.num === cell.num ? { ...c, alive: false } : c))]
-        } else if(nAlive.length > 3){
-          newDead.push(cell.num)
-          //console.log("killing cell " + cell.num)
-          newState = [...newState.map(c => (c.num === cell.num ? { ...c, alive: false } : c))]
-        }
-      } else {
-        //cell is DEAD
-        if(nAlive.length === 3) {
-          newAlive.push(cell.num)
-          //console.log(cell.num + " has " + nAlive.length + " neighbours")
-          //console.log("making cell " + cell.num + " alive")
-          newState = [...newState.map(c => (c.num === cell.num ? { ...c, alive: true } : c))]
-        }
-      }
-      //console.log('cell ' + cell.num + " has " + nAlive.length + " alive and " + nDead.length +" dead neighbours ")
-      //console.log(neighbours)
-    })
-    //console.log(newState)
-    //return newState
-    //callback(newState)
-    //return { newState, newAlive, newDead }
-
-    setCellState(newState)
+  const resetGrid = () => {
+    var startIndex = startingStates.findIndex(s => s.name === "Random")
+    setCellState(startingStates[0].state)
   }
+
+  //create starting states
+  useEffect(() => {
+    //random state
+    var cells = []
+    //create the cell state based on grid size
+    for (var i = 0; i < numCells; i++) {
+    	cells.push({
+        num: i,
+        col: i % numCols,
+        row: Math.round(i / numCols),
+        alive: Math.random() < 0.05 ? true : false
+      })
+    }
+    startingStates[0].state = cells
+  }, [configuration])
 
   //load the intial grid/cell state
   useEffect(() => {
@@ -144,7 +101,7 @@ function App() {
         num: i,
         col: i % numCols,
         row: Math.round(i / numCols),
-        alive: Math.random() < 0.05 ? true : false
+        alive: Math.random() < 0.25 ? true : false
       })
     }
     setCellState(cells)
@@ -164,11 +121,13 @@ function App() {
     setCellState(NextState(cellState))
   }, play ? delay : null);
 
+  //change starting configuration
+  const handleChangeStart = (e, { value }) => setConfiguration({ value })
 
   return (
     <div style={windowSize.width < 650 ? mainStyleMobile : mainStyle}>
     <h1> Conway Game of Life </h1>
-    <p> <a href='https://en.wikipedia.org/wiki/John_Horton_Conway' target="_blank"> John Conway </a> was a mathematician most famous for his <span style={{fontStyle: 'italic'}}> Game of Life. </span> </p>
+    <p> <a href='https://en.wikipedia.org/wiki/John_Horton_Conway' target="_blank" style={{color: '#3CFF72'}}> John Conway </a> was a mathematician most famous for his <span style={{fontStyle: 'italic'}}> Game of Life. </span> </p>
       <div style={{
         border: '2px solid rgba(255, 255, 255, 1)',
         width: windowSize.width < 650 ? '95%' : '75%',
@@ -181,15 +140,18 @@ function App() {
         justifyContent: 'space-between'
       }}>
       <div style={controls}>
-      <Select placeholder='Default start' options={configuration} />
-      <Button icon onClick={() => setPlay(!play)}>
-        {
-          play ?
-          <Icon name='pause'/>
-          :
-          <Icon name='caret right'/>
-        }
-      </Button>
+      <div></div>
+      <div>
+
+        <Button icon onClick={() => setPlay(!play)}>
+          {
+            play ?
+            <Icon name='pause'/>
+            :
+            <Icon name='caret right'/>
+          }
+        </Button>
+      </div>
       </div>
       <Grid windowSize={windowSize} numCols={numCols} numRows={numRows} cells={cellState}/>
       </div>
@@ -198,3 +160,15 @@ function App() {
 }
 
 export default App;
+
+
+// <Dropdown
+//   options={startConfigurations}
+//   value={configuration.text}
+//   onChange={handleChangeStart}
+//   selection
+// />
+//
+// <Button icon onClick={() => resetGrid()}>
+//   <Icon name='undo'/>
+// </Button>
