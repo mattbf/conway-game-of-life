@@ -3,17 +3,17 @@ import { Button } from 'semantic-ui-react'
 import Cell from './Cell.js';
 
 const gameBoardStyle = {
-  border: 'solid',
-  borderColor: 'white',
+  border: '2px solid rgba(255, 255, 255, 1)',
   overflow: 'hidden',
   borderRadius: '6px',
+  padding: '2px'
 }
 
 const gameBoardStyleMobile = {
-  border: 'solid',
-  borderColor: 'white',
+  border: '2px solid rgba(255, 255, 255, 1)',
   overflow: 'hidden',
   borderRadius: '6px',
+  padding: '2px'
 }
 
 

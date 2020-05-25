@@ -7,6 +7,8 @@ import {
 import useWindowSize from './Utils/useWindowSize';
 import Grid from './Grid/Grid.js';
 
+import { NextState } from './Engine/Engine.js'
+
 const mainStyle = {
   backgroundColor: '#383838',
   width: '100%',
@@ -68,7 +70,6 @@ function App() {
     for (var i = 0; i < numCells; i++) {
     	cells.push({
         num: i,
-        alive: false,
         col: i % numCols,
         row: Math.round(i / numCols),
         alive: Math.random() < 0.1 ? true : false
@@ -85,12 +86,17 @@ function App() {
     }
   }, [windowSize.width])
 
+  function UpdateGrid(){
+    var nextCells = NextState(cellState, numCols, numRows)
+    setCellState(nextCells)
+  }
+
   //run the engine
   useEffect(() => {
     console.log("play changed")
     if(play){
       console.log("start the game")
-      var game = setInterval(() => {console.log("Change the grid")}, 500);
+      var game = setInterval(() => {UpdateGrid()}, 1000);
     } else {
       console.log("pause the game")
       clearInterval(game)
@@ -101,7 +107,7 @@ function App() {
   return (
     <div style={windowSize.width < 650 ? mainStyleMobile : mainStyle}>
     <h1> Conway Game of Life </h1>
-    <p> lfdksjhl;asdjflkjasdl;fj ljsdkl; jskfjdsahfk ashfsdf h hsfkh k  sdkfhadlskfshdh ka </p>
+    <p> <a href='https://en.wikipedia.org/wiki/John_Horton_Conway' target="_blank"> John Conway </a> was a mathematician most famous for his <span style={{fontStyle: 'italic'}}> Game of Life. </span> </p>
       <div style={{
         border: '2px solid rgba(255, 255, 255, 1)',
         width: windowSize.width < 650 ? '95%' : '75%',
