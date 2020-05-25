@@ -7,6 +7,8 @@ import {
 import useWindowSize from './Utils/useWindowSize';
 import Grid from './Grid/Grid.js';
 
+import {useInterval} from './Utils/useInterval'
+
 import { NextState } from './Engine/Engine.js'
 
 const mainStyle = {
@@ -55,11 +57,12 @@ function App() {
   const [play, setPlay] = useState(false)
   const [configuration, setConfiguration] = useState(startConfigurations)
   //Fixed grid
-  const numCols = windowSize.width < 650 ? 50 : 10
-  const numRows = windowSize.width < 650 ? 25 : 10
+  const numCols = windowSize.width < 650 ? 50 : 100
+  const numRows = windowSize.width < 650 ? 25 : 50
   const numCells = numCols * numRows
 
   const [cellState, setCellState] = useState([])
+  const [delay, setDelay] = useState(1000)
 
   function Engine(){
     //RULES
@@ -73,7 +76,7 @@ function App() {
     var curAlive = []
     var ca = cellState.filter(c => c.alive)
     ca.forEach(c => curAlive.push(c.num))
-    console.log(curAlive)
+    //console.log(curAlive)
 
     cellState.forEach(cell => {
       //count alive and dead neighbours
@@ -131,12 +134,7 @@ function App() {
     setCellState(newState)
   }
 
-  useEffect(() => {
-    console.log("cell state was updated")
-    console.log(cellState.filter(c => c.alive))
-  }, [cellState])
-
-  //load the grid/cell state
+  //load the intial grid/cell state
   useEffect(() => {
     var mobile = windowSize.width < 650 ? true : false
     var cells = []
@@ -146,7 +144,7 @@ function App() {
         num: i,
         col: i % numCols,
         row: Math.round(i / numCols),
-        alive: i === 14 || i === 13 || i === 18 || i === 12 || i === 100 || i === 15 || i === 1 || i === 11 || i === 23 || i === 24 ? true : false //Math.random() < 0.1 ? true : false
+        alive: Math.random() < 0.05 ? true : false
       })
     }
     setCellState(cells)
@@ -161,42 +159,11 @@ function App() {
     }
   }, [])
 
-  function updateGrid() {
-    //var {newState, newAlive, newDead} = NextState(cellState)
-    //setCellState(NextState(cellState))
-    //setCellState(nextCells)
+  //Control the engine
+  useInterval(() => {
+    setCellState(NextState(cellState))
+  }, play ? delay : null);
 
-    //console.log(newAlive)
-    //console.log(newDead)
-    var newState = NextState(cellState)
-    var newAlive = []
-    var na = newState.filter(c => c.alive)
-    na.forEach(c => newAlive.push(c.num))
-    console.log(newAlive)
-    setCellState(newState)
-
-    //NextState(cellState)
-  }
-
-  function MountTimer(){
-    // if(play){
-    //   console.log("start the game")
-    //   var game = setInterval(() => Engine(), 1000);
-    // } else {
-    //   console.log("pause the game")
-    //   clearInterval(game)
-    // }
-    // return () => clearInterval(game);
-    console.log("start the game")
-    var game = setInterval(Engine(), 1000);
-    return () => clearInterval(game);
-  }
-
-  //run the engine
-  useEffect(() => {
-    console.log("play changed")
-    MountTimer()
-  }, [play])
 
   return (
     <div style={windowSize.width < 650 ? mainStyleMobile : mainStyle}>
