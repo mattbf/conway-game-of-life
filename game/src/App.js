@@ -55,8 +55,8 @@ function App() {
   const [play, setPlay] = useState(false)
   const [configuration, setConfiguration] = useState(startConfigurations)
   //Fixed grid
-  const numCols = windowSize.width < 650 ? 50 : 100
-  const numRows = windowSize.width < 650 ? 25 : 50
+  const numCols = windowSize.width < 650 ? 50 : 10
+  const numRows = windowSize.width < 650 ? 25 : 5
   const numCells = numCols * numRows
 
   const [cellState, setCellState] = useState([])
@@ -76,6 +76,7 @@ function App() {
       })
     }
     setCellState(cells)
+    console.log(cells)
 
     if(!mobile){
       //desktop
