@@ -53,6 +53,17 @@ const startConfigurations = [
   {key: 1, value: 1, text: 'Shooter' },
 ]
 
+const spaceship = [
+  "..........*.......*.........",
+  "....**.*.*.**...**.*.*.**...",
+  ".***.*.***.........***.*.***",
+  ".*...*.*.....*.*.....*.*...*",
+  ".....**......*.*......**....",
+  "..**.........*.*.........**.",
+  "..**.**...............**.**.",
+  "......*...............*.....",
+]
+
 function App() {
   const windowSize = useWindowSize()
   const [play, setPlay] = useState(false)
@@ -63,7 +74,7 @@ function App() {
   const numCells = numCols * numRows
 
   const [cellState, setCellState] = useState([])
-  const [delay, setDelay] = useState(500)
+  const [delay, setDelay] = useState(100)
 
   const startingStates = [
     {name: "Random", state: []},
@@ -74,6 +85,38 @@ function App() {
     var startIndex = startingStates.findIndex(s => s.name === "Random")
     setCellState(startingStates[0].state)
   }
+
+  //take a starting pattern in . + * strings and convert to grid cell state
+  const patternToCellState = (patternArray) => {
+    var cellState = []
+    patternArray.forEach(line => {
+      var chars = line.split('')
+      chars.forEach((c, i) => {
+        if(c === "*"){
+          cellState.push({
+            num: i,
+            col: i % numCols,
+            row: Math.round(i / numCols),
+            alive: true
+          })
+        } else {
+          cellState.push({
+            num: i,
+            col: i % numCols,
+            row: Math.round(i / numCols),
+            alive: false
+          })
+        }
+      })
+    })
+    return cellState
+  }
+
+  var spaceShipCellState = patternToCellState(spaceship)
+  useEffect(() => {
+    console.log(spaceShipCellState)
+  }, [spaceShipCellState])
+
 
   //create starting states
   useEffect(() => {
