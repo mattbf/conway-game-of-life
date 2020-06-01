@@ -88,27 +88,118 @@ function App() {
 
   //take a starting pattern in . + * strings and convert to grid cell state
   const patternToCellState = (patternArray) => {
+    console.log("this pattern is " + patternArray.length + " rows by ")
     var cellState = []
+    var width //width of the pattern
+    var startX = 0
+    var startY = 0
+
+    //fill in a rows and columns with dead cells to center pattern
+    // for (var y = 0; y < startY; y++){
+    //
+    // }
+    // for (var x = 0; x < startX; x++){
+    //   cellState.push({
+    //     num: j,
+    //     col: j % numCols,
+    //     row: Math.round(j / numCols),
+    //     alive: false
+    //   });
+    // }
     patternArray.forEach(line => {
       var chars = line.split('')
-      chars.forEach((c, i) => {
-        if(c === "*"){
-          cellState.push({
-            num: i,
-            col: i % numCols,
-            row: Math.round(i / numCols),
-            alive: true
-          })
-        } else {
-          cellState.push({
-            num: i,
-            col: i % numCols,
-            row: Math.round(i / numCols),
-            alive: false
-          })
+      width  = chars.length
+      console.log(width + " columns")
+      var row = 1
+      console.log(row)
+      var startX = 10
+      var startY = 0
+      chars.forEach((c, index) => {
+        switch(startY) {
+          case startY !== 0:
+            //fill in the top starting rows
+            for(var y = startY; y > 0; y--){
+              for(var c = 0; c < numCols; c++){
+                cellState.push({
+                  num: c,
+                  col: c % numCols,
+                  row: Math.round(c / numCols),
+                  alive: false
+                })
+              }
+            }
+            break;
+          case startY ===0:
+              var i = startX + index
+              //console.log(i + " is less than " + width)
+              //add pattern, dead or alive
+              if(i !== startX + width - 1){
+                if(c === "*"){
+                  cellState.push({
+                    num: i,
+                    col: i % numCols,
+                    row: Math.round(i / numCols),
+                    alive: true
+                  })
+                } else {
+                  cellState.push({
+                    num: i,
+                    col: i % numCols,
+                    row: Math.round(i / numCols),
+                    alive: false
+                  })
+                }
+              } else {
+                if(c === "*"){
+                  cellState.push({
+                    num: i,
+                    col: i % numCols,
+                    row: Math.round(i / numCols),
+                    alive: true
+                  })
+                } else {
+                  cellState.push({
+                    num: i,
+                    col: i % numCols,
+                    row: Math.round(i / numCols),
+                    alive: false
+                  })
+                }
+                console.log("end of row")
+                //fill in the rest of the row
+                var fillRow = numCols - width
+                var start = row * 100 - 72
+                var loopend = start + fillRow
+                for (var j = start; j < loopend; j++){
+                  cellState.push({
+                    num: j,
+                    col: j % numCols,
+                    row: Math.round(j / numCols),
+                    alive: false
+                  });
+                }
+              }
+              row ++
+            break;
         }
       })
+
     })
+    console.log(cellState.length)
+
+    //fill in the rest if the state
+    if(cellState.length < numCells){
+      var difference = numCells - cellState.length
+      for( var i=0; i < difference; i++){
+        cellState.push({
+          num: i,
+          col: i % numCols,
+          row: Math.round(i / numCols),
+          alive: false
+        })
+      }
+    }
+
     return cellState
   }
 
@@ -147,7 +238,8 @@ function App() {
         alive: Math.random() < 0.25 ? true : false
       })
     }
-    setCellState(cells)
+    //setCellState(cells)
+    setCellState(spaceShipCellState)
     console.log(cells)
 
     if(!mobile){
