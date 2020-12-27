@@ -1,3 +1,4 @@
 # Conway Game of Life
 
-## How it works
+### example in action
+![](conway.gif)
